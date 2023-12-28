@@ -1,9 +1,11 @@
 /*list.h*/
 
 //
-// Author: Prof. Hummel, U. of Illinois Chicago, Spring 2021
-//
-// This library implements a one-way linked-list.
+// Author: Prof. Hummel, U. of I. Chicago, Spring 2021
+// 
+// Implements a one-way linked-list with optimized insertion at
+// head and tail of list. The nodes contain 2 data values, a string
+// and an integer.
 //
 
 #pragma once
@@ -16,107 +18,186 @@
 using namespace std;
 
 
-//
-// The data stored in each node:
-//
-struct NodeData
+class List
 {
-   int ID;
-   int Priority;
-};
+private:
+   class NodeData
+   {
+   public:
+      string  Value1;
+      int     Value2;
+   };
 
+   class Node
+   {
+   public:
+      NodeData Data;
+      Node*    Next;
+   };
 
-//
-// Node in a one-way linked-list:
-//
-struct Node
-{
-   NodeData Data;
-   Node*    Next;
-};
-
-
-//
-// List defines a linked-list:
-//
-struct List
-{
+   //
+   // data members:
+   //
    Node* Head;
+   Node* Tail;
    int   Count;
+
+   //
+   // private member functions:
+   //
+   void initAndDeepCopy(const List& other);  // inits this list then makes deep copy of other
+   void freeAndReset();  // free the nodes in this list and then resets to empty
+
+public:
+   //
+   // default constructor
+   //
+   // Initializes the list to empty.
+   // 
+   // Time complexity: O(1)
+   //
+   List();
+
+   //
+   // copy constructor
+   //
+   // Makes a deep copy of the other list into this list.
+   // 
+   // Time complexity: O(N)
+   //
+   List(const List& other); 
+
+   //
+   // destructor
+   //
+   // Frees all memory related to this list, and then resets to empty.
+   // 
+   // Time complexity: O(N)
+   //
+   ~List(); 
+
+   //
+   // assignment operator (e.g. L2 = L;)
+   //
+   // Makes a deep copy of the other list into this list; since this
+   // list already exists, the existing elements of this list are freed
+   // before the copy is made.
+   // 
+   // Time complexity: O(N)
+   //
+   List& operator=(const List& other);  
+
+   //
+   // size
+   //
+   // Returns the # of elements in the list.
+   //
+   // Time complexity: O(1)
+   //
+   int size();
+
+   //
+   // empty
+   //
+   // Returns true if empty, false if not.
+   //
+   // Time complexity: O(1)
+   //
+   bool empty();
+
+   //
+   // search
+   //
+   // Search the list for the first occurence of the string value.
+   // If found, its position in the list is returned. Positions are 
+   // 0-based, meaning the first node is position 0. If the value is
+   // not found, -1 is returned.
+   //
+   // Time complexity: on average O(N)
+   //
+   int search(string value);
+
+   //
+   // retrieve
+   //
+   // Retrieve's the data from node at the given position; the list 
+   // remains unchanged. Positions are 0-based, meaning the first node
+   // is position 0. Throws an "invalid_argument" exception if the 
+   // position is invalid, i.e. 
+   // throw invalid_argument("List::retrieve: invalid position");
+   //
+   // Time complexity: on average O(N)
+   //
+   void retrieve(int pos, string& value1, int& value2);
+
+   //
+   // insert
+   //
+   // Inserts the given data in the list such that after
+   // the insertion, the value is now at the given
+   // position.
+   //
+   // Positions are 0-based, which means a position of 0 
+   // denotes the data will end up at the head of the list,
+   // and a position of N (where N = the size of the list)
+   // denotes the data will end up at the tail of the list.
+   // If the position is invalid, throws an exception, i.e.
+   // throw invalid_argument("List::insert: invalid position");
+   //
+   // Time complexity: on average O(N)
+   //
+   void insert(int pos, string value1, int value2);
+
+   //
+   // remove
+   //
+   // Removes and deletes the node at the given position; no data is
+   // returned. Positions are 0-based, meaning the first node
+   // is position 0. Throws an "invalid_argument" exception if the 
+   // position is invalid, i.e. 
+   // throw invalid_argument("List::remove: invalid position");
+   //
+   // Time complexity: on average O(N)
+   //
+   void remove(int pos);
+
+   //
+   // front
+   //
+   // Returns the data from the first node in the list. Throws an 
+   // exception if the list is empty, i.e.
+   // throw runtime_error("List::front: empty list");
+   // 
+   // Time complexity: O(1)
+   //
+   void front(string& value1, int& value2);
+
+   //
+   // back
+   //
+   // Returns the data from the last node in the list. Throws an 
+   // exception if the list is empty, i.e.
+   // throw runtime_error("List::back: empty list");
+   // 
+   // Time complexity: O(1)
+   //
+   void back(string& value1, int& value2);
+
+   //
+   // push_front
+   //
+   // Inserts the given data at the front of the list.
+   // 
+   // Time complexity: O(1)
+   //
+   void push_front(string value1, int value2);
+
+   //
+   // push_back
+   //
+   // Inserts the given data at the back of the list.
+   // 
+   // Time complexity: O(1)
+   //
+   void push_back(string value1, int value2);
 };
-
-
-//
-// Functions:
-//
-
-// 
-// init_list
-//
-// Initializes list to empty; must be called before list can 
-// be used with other functions.
-//
-void init_list(List& L);
-
-//
-// print_list
-//
-// Outputs "List: " followed by each data element and a space. Output
-// is directed to the console. The format of each data element is 
-// (field1,field2,...), e.g. (ID,Priority).
-//
-void print_list(List L);
-
-//
-// push_back_list
-//
-// Pushes the data onto the end of the list.
-//
-void push_back_list(List& L, NodeData d);
-
-//
-// push_front_list
-//
-// Pushes the data onto the front of the list.
-//
-void push_front_list(List& L, NodeData d);
-
-//
-// free_list
-//
-// Deletes all nodes from the list, frees the memory, and resets
-// the list to empty.
-//
-void free_list(List& L);
-
-//
-// search_list
-//
-// Search the list for the first occurrence of the given ID. If found,
-// its position in the list is returned; positions are 0-based,
-// meaning the first node is position 0. If not found, -1 is
-// returned.
-//
-int search_list(List L, int ID);
-
-//
-// retrieve_from_list
-//
-// Retrieve's the data from node at the given position; the list 
-// remains unchanged. Positions are 0-based, meaning the first node
-// is position 0. Throws an "invalid_argument" exception if the 
-// position is invalid, i.e. 
-// throw invalid_argument("retrieve_from_list: invalid position");
-//
-NodeData retrieve_from_list(List L, int pos);
-
-//
-// remove_from_list
-//
-// Removes and frees the node at the given position, returning 
-// the node's data. Positions are 0-based, meaning the first node
-// is position 0. Throws an "invalid_argument" exception if the 
-// position is invalid, i.e. 
-// throw invalid_argument("remove_from_list: invalid position");
-//
-NodeData remove_from_list(List& L, int pos);
